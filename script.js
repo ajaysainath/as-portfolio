@@ -349,7 +349,7 @@ window.open("https://github.com/ajaysainath","_blank");
 
 /* LINKEDIN */
 else if(command.includes("linkedin")){
-window.open("https://linkedin.com/in/ajay-sainath-3269832a4","_blank");
+window.open("https://www.linkedin.com/in/ajay-sainath-3269832a4","_blank");
 }
 
 /* PROJECT LINKS */
