@@ -9,7 +9,7 @@
 <title>Ajay Sainath | AI Interface Portfolio</title>
 
 <link rel="stylesheet" href="style.css">
-
+<link rel="icon" href="images/favicon.png">
 </head>
 
 
@@ -70,9 +70,30 @@ AjaySainath
 
 <header>AI SYSTEM INTERFACE</header>
 
-<div class="center-panel">
 
-<div class="ai-core">
+
+<div class="home-grid">
+
+
+<!-- LEFT PANEL -->
+<div class="side-panel left-panel">
+    <h3>AI METRICS</h3>
+    <p>Model Accuracy <span>94%</span></p>
+    <p>Training Data <span>2.3M</span></p>
+    <p>Inference Time <span>38ms</span></p>
+    <p>Projects Built <span>5</span></p>
+</div>
+
+<!-- ORB CENTER -->
+<div class="center-panel">
+    <div class="ai-core">
+
+<div class="ai-orbit">
+
+<span style="--i:0;">ML</span> <span style="--i:1;">NLP</span> <span style="--i:2;">LLM</span> <span style="--i:3;">VISION</span> <span style="--i:4;">GRAPH</span> <span style="--i:5;">FASTAPI</span> <span style="--i:6;">PYTORCH</span> <span style="--i:7;">AI</span>
+
+</div>
+
 
 <div class="hud-ring"></div>
 <div class="hud-ring-2"></div>
@@ -92,6 +113,20 @@ AjaySainath
 <canvas id="orbCanvas"></canvas>
 
 </div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="side-panel right-panel">
+    <h3>SYSTEM LOAD</h3>
+    <p>CPU Usage <span>21%</span></p>
+    <p>Memory <span>1.4GB</span></p>
+    <p>Network <span>Stable</span></p>
+    <p>Latency <span>42ms</span></p>
+</div>
+
+
+</div>
+
 
 <!-- Voice waveform -->
 
@@ -100,8 +135,29 @@ AjaySainath
 <div class="ai-status">
 Listening...
 </div>
+<div class="ai-dashboard">
+
+  <div class="ai-panel">
+    <h3>SYSTEM STATUS</h3>
+    <p>AI Model: <span class="active">Active</span></p>
+    <p>Voice Engine: <span class="active">Listening</span></p>
+    <p>Latency: 42 ms</p>
+    <p>Uptime: 99.9%</p>
+  </div>
+
+  <div class="ai-panel">
+    <h3>CURRENT FOCUS</h3>
+    <p>AI Developer</p>
+    <p>Generative AI</p>
+    <p>Intelligent Systems</p>
+    <p>Knowledge Graphs</p>
+  </div>
 
 </div>
+
+<p class="console-hint">Press "/" to open AI console</p>
+
+
 
 </section>
 
@@ -116,8 +172,7 @@ Listening...
 <h1>About Me</h1>
 
 <p>
-AI Developer passionate about intelligent systems,
-machine learning and futuristic interfaces.
+Al Developer with experience building intelligent developer tools and generative Al systems. Developed AST-based code analysis platforms, knowledge graph visualization systems, and real-time voice Al agents using Python, FastAPI, and PyTorch. Interned at ISRO working on satellite data platforms and geospatial systems.  
 </p>
 
 <p>
@@ -138,6 +193,7 @@ Experience with Python, PyTorch, FastAPI and Generative AI.
 
 <h1 class="section-title">Projects</h1>
 
+<canvas id="projectsNetwork"></canvas>
 <div class="projects-grid">
 
 <!-- Project 1 -->
@@ -154,7 +210,11 @@ Experience with Python, PyTorch, FastAPI and Generative AI.
 </div>
 
 <div class="project-links">
-<a href="#">GitHub</a>
+<a href="https://github.com/ajaysainath/ai-code-review-assistant"
+target="_blank"
+rel="noopener ">
+GitHub
+</a>
 <a href="#">Live Demo</a>
 </div>
 </div>
@@ -162,7 +222,7 @@ Experience with Python, PyTorch, FastAPI and Generative AI.
 
 <!-- Project 2 -->
 <div class="project-card">
-<img src="images/ai-code-review-assistant.png">
+<img src="images/ai-codebase-knowledge-graph.png">
 
 <h3>AI Codebase Knowledge Graph</h3>
 <p>Visualizes relationships between files and modules.</p>
@@ -174,7 +234,7 @@ Experience with Python, PyTorch, FastAPI and Generative AI.
 </div>
 
 <div class="project-links">
-<a href="#">GitHub</a>
+<a href="https://github.com/ajaysainath/ai-codebase-knowledge-graph" target="_blank" rel="noopener">GitHub</a>
 <a href="#">Live Demo</a>
 </div>
 </div>
@@ -194,7 +254,7 @@ Experience with Python, PyTorch, FastAPI and Generative AI.
 </div>
 
 <div class="project-links">
-<a href="#">GitHub</a>
+<a href="https://github.com/ajaysainath/voice-ai-agent" target="_blank" rel="noopener">GitHub</a>
 <a href="#">Live Demo</a>
 </div>
 </div>
@@ -273,31 +333,30 @@ feel free to contact me.
 </div>
 
 </section>
-
-
-
-
-
 <!-- BACKGROUND DATA ANIMATION -->
 
 <canvas id="dataCanvas"></canvas>
 
-<script src="script.js"></script>
-
-
 <div id="ai-console">
 
-<div class="console-box">
+  <div class="console-box">
 
-<div class="console-title">AI COMMAND</div>
+<div class="console-title">
+  AI COMMAND CONSOLE
+</div>
 
-<input id="console-input" placeholder="type command..." />
+<input 
+  id="console-input"
+  type="text"
+  placeholder="Type command..."
+  autocomplete="off"
+>
+
+  </div>
 
 </div>
 
-</div>
-
+<script src="script.js"></script>
 
 </body>
-
 </html>

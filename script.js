@@ -14,6 +14,28 @@ boot.style.display = "none";
 
 /* ================= GLOBAL VARIABLES ================= */
 
+let commandRunning = false;
+let recognition;
+
+if ('webkitSpeechRecognition' in window) {
+
+recognition = new webkitSpeechRecognition();
+
+recognition.continuous = true;
+recognition.interimResults = false;
+
+recognition.onresult = function(event){
+
+let last = event.results.length - 1;
+let command = event.results[last][0].transcript;
+
+handleCommand(command);
+
+};
+
+recognition.start();
+
+}
 let volume = 0;
 let mouseX = 0;
 let mouseY = 0;
@@ -302,7 +324,7 @@ window.SpeechRecognition || window.webkitSpeechRecognition;
 
 if(SpeechRecognition){
 
-const recognition = new SpeechRecognition();
+recognition = new SpeechRecognition();
 
 recognition.continuous = true;
 recognition.lang = "en-US";
@@ -333,27 +355,80 @@ recognition.start();
 };
 
 }
-
-
 /* ================= COMMAND HANDLER ================= */
+function speak(text, callback){
 
+if(recognition){
+try{
+recognition.stop();
+}catch(e){}
+}
+
+const speech = new SpeechSynthesisUtterance(text);
+
+speech.rate = 1;
+speech.pitch = 1;
+speech.volume = 1;
+
+speech.onend = function(){
+
+if(callback){
+callback();
+}
+
+setTimeout(function(){
+
+if(recognition){
+try{
+recognition.start();
+}catch(e){}
+}
+
+},300);
+
+};
+
+speechSynthesis.speak(speech);
+
+}
 
 function handleCommand(command){
 
+if(commandRunning) return;
+
+commandRunning = true;
+
 command = command.toLowerCase();
 
-/* PROJECTS */
+if(
+command.includes("projects") ||
+command.includes("open projects")
+){
 
-if(command.includes("project") || command.includes("show project")){
-document.getElementById("projects").scrollIntoView({behavior:"smooth"});
+speak("Opening projects section", function(){
+
+document.querySelector("#projects").scrollIntoView({
+behavior:"smooth"
+});
+
+});
+
 }
 
 /* SKILLS */
 
-else if(command.includes("skill") || command.includes("show skills")){
-document.getElementById("skills").scrollIntoView({behavior:"smooth"});
-}
+else if(
+command.includes("skills") ||
+command.includes("open skills")
+){
+speak("Opening skills section", function(){
 
+document.querySelector("#skills").scrollIntoView({
+behavior:"smooth"
+});
+
+});
+}
 /* CONTACT */
 
 else if(
@@ -361,7 +436,13 @@ command.includes("contact") ||
 command.includes("contact me") ||
 command.includes("open contact")
 ){
-document.getElementById("contact").scrollIntoView({behavior:"smooth"});
+speak("Opening contact section", function(){
+
+document.getElementById("contact").scrollIntoView({
+behavior:"smooth"
+});
+
+});
 }
 
 /* ABOUT */
@@ -371,7 +452,13 @@ command.includes("about") ||
 command.includes("about section") ||
 command.includes("open about")
 ){
-document.getElementById("about").scrollIntoView({behavior:"smooth"});
+speak("Opening about section", function(){
+
+document.getElementById("about").scrollIntoView({
+behavior:"smooth"
+});
+
+});
 }
 
 /* HOME */
@@ -389,9 +476,10 @@ document.getElementById("home").scrollIntoView({behavior:"smooth"});
 else if(
 command.includes("github") ||
 command.includes("open github")
-){
-window.open("https://github.com/ajaysainath","_blank");
-}
+)
+speak("Opening GitHub profile", function(){
+window.open("https://github.com/ajaysainath", "_blank");
+});
 
 /* LINKEDIN */
 
@@ -399,9 +487,10 @@ else if(
 command.includes("linkedin") ||
 command.includes("linked in") ||
 command.includes("open linkedin")
-){
-window.open("https://linkedin.com/in/ajay-sainath-3269832a4","_blank");
-}
+)
+speak("Opening LinkedIn profile", function(){
+window.open("https://linkedin.com/in/ajay-sainath-3269832a4", "_blank");
+});
 
 /* PROJECT LINKS */
 
@@ -555,7 +644,7 @@ document.addEventListener("keydown", function(e){
 
 if(e.key === "/"){
 
-e.preventDefault();
+e.preventDefault()
 
 consoleBox.style.display="flex";
 consoleInput.focus();
@@ -571,18 +660,199 @@ consoleBox.style.display="none";
 });
 
 
-consoleInput.addEventListener("keydown", function(e){
+if (consoleInput) {
+  consoleInput.addEventListener("keydown", function(e){
 
-if(e.key === "Enter"){
+    if(e.key === "Enter"){
+      let cmd = consoleInput.value.toLowerCase();
 
-let cmd = consoleInput.value.toLowerCase();
+      handleCommand(cmd);
 
-handleCommand(cmd);
+      consoleBox.style.display = "none";
 
-consoleBox.style.display="none";
+      consoleInput.value = "";
+    }
 
-consoleInput.value="";
+  });
+}
+
+
+
+const cards = document.querySelectorAll(".project-card");
+
+cards.forEach(card => {
+
+  card.addEventListener("mousemove", (e) => {
+
+    const rect = card.getBoundingClientRect();
+
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotateX = -(y - centerY) / 12;
+    const rotateY = (x - centerX) / 12;
+
+    card.style.transform =
+      `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
+
+    card.style.setProperty("--x", x + "px");
+    card.style.setProperty("--y", y + "px");
+
+  });
+
+  card.addEventListener("mouseleave", () => {
+    card.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
+  });
+
+});
+
+const networkCanvas = document.getElementById("projectsNetwork");
+
+if(networkCanvas){
+
+const ctx = networkCanvas.getContext("2d");
+
+let width;
+let height;
+
+function resize(){
+width = networkCanvas.offsetWidth;
+height = networkCanvas.offsetHeight;
+
+networkCanvas.width = width;
+networkCanvas.height = height;
+}
+
+resize();
+window.addEventListener("resize", resize);
+
+const nodes = [];
+
+for(let i=0;i<40;i++){
+nodes.push({
+x:Math.random()*width,
+y:Math.random()*height,
+vx:(Math.random()-0.5)*0.6,
+vy:(Math.random()-0.5)*0.6
+});
+}
+
+function draw(){
+
+ctx.clearRect(0,0,width,height);
+
+nodes.forEach(node=>{
+node.x += node.vx;
+node.y += node.vy;
+
+if(node.x<0||node.x>width) node.vx *= -1;
+if(node.y<0||node.y>height) node.vy *= -1;
+
+ctx.beginPath();
+ctx.arc(node.x,node.y,2,0,Math.PI*2);
+ctx.fillStyle="#00eaff";
+ctx.fill();
+});
+
+for(let i=0;i<nodes.length;i++){
+for(let j=i+1;j<nodes.length;j++){
+
+const dx = nodes[i].x - nodes[j].x;
+const dy = nodes[i].y - nodes[j].y;
+const dist = Math.sqrt(dx*dx + dy*dy);
+
+if(dist < 120){
+
+ctx.beginPath();
+ctx.moveTo(nodes[i].x,nodes[i].y);
+ctx.lineTo(nodes[j].x,nodes[j].y);
+
+ctx.strokeStyle = "rgba(0,234,255,"+(1 - dist/120)+")";
+ctx.lineWidth = 0.5;
+
+ctx.stroke();
+}
+
+}
+}
+
+requestAnimationFrame(draw);
+}
+
+draw();
 
 }
 
+
+/* ================= ORB ANIMATION ================= */
+
+const orbCanvas = document.getElementById("orbCanvas");
+
+if(orbCanvas){
+
+const ctx = orbCanvas.getContext("2d");
+
+let w = orbCanvas.width = 420;
+let h = orbCanvas.height = 420;
+
+let particles = [];
+
+for(let i=0;i<60;i++){
+particles.push({
+x:Math.random()*w,
+y:Math.random()*h,
+vx:(Math.random()-0.5)*0.7,
+vy:(Math.random()-0.5)*0.7
 });
+}
+
+function drawOrb(){
+
+ctx.clearRect(0,0,w,h);
+
+particles.forEach(p=>{
+p.x += p.vx;
+p.y += p.vy;
+
+if(p.x<0||p.x>w) p.vx *= -1;
+if(p.y<0||p.y>h) p.vy *= -1;
+
+ctx.beginPath();
+ctx.arc(p.x,p.y,2,0,Math.PI*2);
+ctx.fillStyle="#00eaff";
+ctx.fill();
+});
+
+for(let i=0;i<particles.length;i++){
+for(let j=i+1;j<particles.length;j++){
+
+const dx = particles[i].x - particles[j].x;
+const dy = particles[i].y - particles[j].y;
+
+const dist = Math.sqrt(dx*dx + dy*dy);
+
+if(dist < 120){
+
+ctx.beginPath();
+ctx.moveTo(particles[i].x,particles[i].y);
+ctx.lineTo(particles[j].x,particles[j].y);
+
+ctx.strokeStyle="rgba(0,234,255,"+(1 - dist/120)+")";
+ctx.lineWidth=0.6;
+
+ctx.stroke();
+}
+}
+}
+
+requestAnimationFrame(drawOrb);
+
+}
+
+drawOrb();
+
+}
+
