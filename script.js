@@ -15,27 +15,7 @@ boot.style.display = "none";
 /* ================= GLOBAL VARIABLES ================= */
 
 let commandRunning = false;
-let recognition;
 
-if ('webkitSpeechRecognition' in window) {
-
-recognition = new webkitSpeechRecognition();
-
-recognition.continuous = true;
-recognition.interimResults = false;
-
-recognition.onresult = function(event){
-
-let last = event.results.length - 1;
-let command = event.results[last][0].transcript;
-
-handleCommand(command);
-
-};
-
-recognition.start();
-
-}
 let volume = 0;
 let mouseX = 0;
 let mouseY = 0;
@@ -316,184 +296,63 @@ link.classList.add("active");
 
 });
 
-
-/* ================= VOICE COMMAND SYSTEM ================= */
-
-const SpeechRecognition =
-window.SpeechRecognition || window.webkitSpeechRecognition;
-
-if(SpeechRecognition){
-
-recognition = new SpeechRecognition();
-
-recognition.continuous = true;
-recognition.lang = "en-US";
-recognition.interimResults = false;
-
-recognition.start();
-
-recognition.onresult = function(event){
-
-const transcript =
-event.results[event.results.length-1][0].transcript
-.toLowerCase().trim();
-
-handleCommand(transcript);
-
-};
-
-recognition.onerror = function(event){
-
-if(event.error !== "no-speech"){
-console.log("Speech error:", event.error);
-}
-
-};
-
-recognition.onend = function(){
-recognition.start();
-};
-
-}
 /* ================= COMMAND HANDLER ================= */
-function speak(text, callback){
-
-if(recognition){
-try{
-recognition.stop();
-}catch(e){}
-}
-
-const speech = new SpeechSynthesisUtterance(text);
-
-speech.rate = 1;
-speech.pitch = 1;
-speech.volume = 1;
-
-speech.onend = function(){
-
-if(callback){
-callback();
-}
-
-setTimeout(function(){
-
-if(recognition){
-try{
-recognition.start();
-}catch(e){}
-}
-
-},300);
-
-};
-
-speechSynthesis.speak(speech);
-
-}
 
 function handleCommand(command){
 
-if(commandRunning) return;
+command = command.toLowerCase().trim();
 
-commandRunning = true;
-
-command = command.toLowerCase();
-
+/* PROJECTS */
 if(
 command.includes("projects") ||
 command.includes("open projects")
 ){
-
-speak("Opening projects section", function(){
-
-document.querySelector("#projects").scrollIntoView({
-behavior:"smooth"
-});
-
-});
-
+document.querySelector("#projects").scrollIntoView({behavior:"smooth"});
 }
 
 /* SKILLS */
-
 else if(
 command.includes("skills") ||
 command.includes("open skills")
 ){
-speak("Opening skills section", function(){
-
-document.querySelector("#skills").scrollIntoView({
-behavior:"smooth"
-});
-
-});
+document.querySelector("#skills").scrollIntoView({behavior:"smooth"});
 }
-/* CONTACT */
 
+/* CONTACT */
 else if(
 command.includes("contact") ||
-command.includes("contact me") ||
 command.includes("open contact")
 ){
-speak("Opening contact section", function(){
-
-document.getElementById("contact").scrollIntoView({
-behavior:"smooth"
-});
-
-});
+document.querySelector("#contact").scrollIntoView({behavior:"smooth"});
 }
 
 /* ABOUT */
-
 else if(
 command.includes("about") ||
-command.includes("about section") ||
 command.includes("open about")
 ){
-speak("Opening about section", function(){
-
-document.getElementById("about").scrollIntoView({
-behavior:"smooth"
-});
-
-});
+document.querySelector("#about").scrollIntoView({behavior:"smooth"});
 }
 
 /* HOME */
-
 else if(
 command.includes("home") ||
-command.includes("go home") ||
-command.includes("open home")
+command.includes("go home")
 ){
-document.getElementById("home").scrollIntoView({behavior:"smooth"});
+document.querySelector("#home").scrollIntoView({behavior:"smooth"});
 }
 
 /* GITHUB */
-
-else if(
-command.includes("github") ||
-command.includes("open github")
-)
-speak("Opening GitHub profile", function(){
-window.open("https://github.com/ajaysainath", "_blank");
-});
+else if(command.includes("github")){
+window.open("https://github.com/ajaysainath","_blank");
+}
 
 /* LINKEDIN */
-
-else if(
-command.includes("linkedin") ||
-command.includes("linked in") ||
-command.includes("open linkedin")
-)
-speak("Opening LinkedIn profile", function(){
-window.open("https://linkedin.com/in/ajay-sainath-3269832a4", "_blank");
-});
+else if(command.includes("linkedin")){
+window.open("https://linkedin.com/in/ajay-sainath3269832a4","_blank");
+}
 
 /* PROJECT LINKS */
-
 else if(command.includes("code review")){
 window.open("https://github.com/ajaysainath/ai-code-review-assistant","_blank");
 }
@@ -507,8 +366,6 @@ window.open("https://github.com/ajaysainath/ai-codebase-knowledge-graph","_blank
 }
 
 }
-
-
 
 document.querySelectorAll(".project-card").forEach(card=>{
 card.addEventListener("mousemove",e=>{
